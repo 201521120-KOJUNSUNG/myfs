@@ -73,15 +73,19 @@ static int xmp_getattr(const char *path, struct stat *stbuf)
 
 static int xmp_access(const char *path, int mask)
 {
-  char fullpath[PATH_MAX];
+  char fullpaths[2][PATH_MAX];
 	int res;
 
-  sprintf(fullpath, "%s%s",
-      rand() % 2 == 0 ? global_context.driveA : global_context.driveB, path);
+  sprintf(fullpaths[0], "%s%s", global_context.driveA, path);
+  sprintf(fullpaths[1], "%s%s", global_context.driveB, path);
 
-	res = access(fullpath, mask);
-	if (res == -1)
-		return -errno;
+	res = access(fullpaths[0], mask);
+        
+	if (res == -1){
+		return -errno;}
+        res = access(fullpaths[1],mask);
+        if ( res ==-1){
+		return -errno;}       
 
 	return 0;
 }
